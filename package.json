@@ -17,7 +17,7 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "precommit": "prettier --staged --tab-width 4"
+    "precommit": "npm prettier --staged --tab-width 4"
   },
   "eslintConfig": {
     "extends": [
