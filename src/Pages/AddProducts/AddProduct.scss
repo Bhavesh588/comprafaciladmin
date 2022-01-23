@@ -1,0 +1,74 @@
+.addproduct {
+    position: absolute;
+    padding: 20px;
+
+    @media only screen and (max-width: 1000px) {
+        width: 100%;
+    }
+
+    .addproduct_inner {
+        width: 100%;
+        // background-color: blue;
+
+        .title {
+            color: white;
+        }
+
+        .select_cat {
+            background-color: rgba($color: #000000, $alpha: 0.7);
+            width: 100%;
+            border: 0;
+            padding: 10px;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type='number'] {
+            -moz-appearance: textfield;
+        }
+    }
+
+    .addproduct_img {
+        width: 1000px;
+
+        @media only screen and (max-width: 1000px) {
+            width: 100%;
+        }
+
+        .inputfile {
+            width: 0.1px;
+            height: 0.1px;
+            opacity: 0;
+            overflow: hidden;
+            position: absolute;
+            z-index: -1;
+        }
+
+        .inputfile + label {
+            font-size: 1.25em;
+            color: rgba($color: #fff, $alpha: 0.7);
+            background-color: rgba($color: #000000, $alpha: 0.7);
+            cursor: pointer;
+            display: inline-block;
+            margin: 5px 0;
+            width: 100%;
+            height: 200px;
+            border-radius: 5px;
+            border: 1px dashed #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s ease-in-out;
+        }
+
+        .inputfile:focus + label,
+        .inputfile + label:hover {
+            background-color: rgba($color: #000000, $alpha: 0.8);
+        }
+    }
+}
