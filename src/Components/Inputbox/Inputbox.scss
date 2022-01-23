@@ -8,6 +8,7 @@
         padding: 10px;
         border-radius: 5px;
         color: #fff;
+        box-sizing: border-box;
 
         &::placeholder {
             color: rgba($color: #fff, $alpha: 0.5);

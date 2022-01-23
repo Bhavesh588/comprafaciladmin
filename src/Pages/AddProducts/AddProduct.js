@@ -22,9 +22,39 @@ const AddProduct = () => {
                     <option value="Select 2">Select 2</option>
                     <option value="Select 3">Select 3</option>
                 </select>
-                {/* <span className='select_image'>
-                    <input type="file" className='choose' />
-                </span> */}
+            </div>
+            <div className="addproduct_img">
+                <div className="container">
+                    <div className="row">
+                        <div className="col-sm d-flex justify-content-center p-1">
+                            <input
+                                type="file"
+                                name="file"
+                                id="file"
+                                className="inputfile"
+                            />
+                            <label htmlFor="file">+</label>
+                        </div>
+                        <div className="col-sm d-flex justify-content-center p-1">
+                            <input
+                                type="file"
+                                name="file"
+                                id="file"
+                                className="inputfile"
+                            />
+                            <label htmlFor="file">+</label>
+                        </div>
+                        <div className="col-sm d-flex justify-content-center p-1">
+                            <input
+                                type="file"
+                                name="file"
+                                id="file"
+                                className="inputfile"
+                            />
+                            <label htmlFor="file">+</label>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     )
