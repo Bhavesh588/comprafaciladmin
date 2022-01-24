@@ -23,6 +23,16 @@
             color: #fff;
         }
 
+        .css-1s2u09g-control {
+            background-color: rgba($color: #000000, $alpha: 0.7);
+            border-color: transparent;
+            border-radius: 5px;
+
+            .css-14el2xx-placeholder {
+                color: rgba($color: #fff, $alpha: 0.5);
+            }
+        }
+
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
             -webkit-appearance: none;
@@ -30,6 +40,21 @@
         }
         input[type='number'] {
             -moz-appearance: textfield;
+        }
+
+        .textarea_txt {
+            background-color: rgba($color: #000000, $alpha: 0.7);
+            width: 100%;
+            height: 200px;
+            border: 0;
+            padding: 10px;
+            border-radius: 5px;
+            color: #fff;
+            box-sizing: border-box;
+
+            &::placeholder {
+                color: rgba($color: #fff, $alpha: 0.5);
+            }
         }
     }
 
@@ -70,5 +95,16 @@
         .inputfile + label:hover {
             background-color: rgba($color: #000000, $alpha: 0.8);
         }
+    }
+
+    .btn_submit {
+        width: 100%;
+        background-color: darkmagenta;
+        border: 0;
+        color: white;
+        padding: 10px;
+        border-radius: 8px;
+        font-weight: 500;
+        font-size: 20px;
     }
 }
