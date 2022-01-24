@@ -2,7 +2,7 @@ import React from 'react'
 
 import './Inputbox.scss'
 
-const Inputbox = ({ type, placeholder, value, setvalue, required = false }) => {
+const Inputbox = ({ type, placeholder, value, setvalue, err }) => {
     return (
         <div className="inputbox">
             <input
@@ -11,8 +11,8 @@ const Inputbox = ({ type, placeholder, value, setvalue, required = false }) => {
                 className="txt_input"
                 value={value}
                 onChange={(e) => setvalue(e.target.value)}
-                required={required}
             />
+            {err ? <div className="text-danger">Required</div> : null}
         </div>
     )
 }
