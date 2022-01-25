@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Select from 'react-select'
+import { collection, onSnapshot } from 'firebase/firestore'
+import app from '../../firebase/firebase'
 
 import './AddProduct.scss'
 
@@ -24,6 +26,39 @@ const AddProduct = () => {
     const [categoryerr, setCategoryErr] = useState(false)
     // const [imageserr, setImagesErr] = useState(false)
 
+    const [storeoption, setStoreOption] = useState(null)
+    // const [categoryoption, setCategoryOption] = useState(null)
+
+    useEffect(() => {
+        if (storeoption === null) {
+            onSnapshot(collection(app, 'store'), (snapshot) => {
+                if (snapshot.docs.length !== 0) {
+                    var option = []
+                    snapshot.docs.map((doc) =>
+                        option.push({
+                            values: doc.data(),
+                            label:
+                                doc.data().Full_Name +
+                                ' ' +
+                                doc.data().Store_id,
+                        })
+                    )
+                    setStoreOption(option)
+                }
+            })
+        }
+        // if(categoryoption === null) {
+        //     onSnapshot(collection(app, "category"), (snapshot) => {
+        //         if(snapshot.docs.length !== 0) {
+        //             var option = []
+        //             console.log(snapshot.docs[0].data().Category)
+        //             snapshot.docs.map(doc => option.push({values: doc.data(), label: doc.data().Full_Name}))
+        //             setCategoryOption(option)
+        //         }
+        //     })
+        // }
+    }, [storeoption])
+
     const options = [
         { value: { main: 'Zone', cate: 'Shirts' }, label: 'Chocolate' },
         { value: { main: 'Zone', cate: 'Shirts' }, label: 'Strawberry' },
@@ -32,6 +67,10 @@ const AddProduct = () => {
 
     const handleChange = (selectedOption) => {
         setCategory(selectedOption)
+    }
+
+    const handleChangestore = (selectedOption) => {
+        setStoreName(selectedOption)
     }
 
     const onSubmit = () => {
@@ -55,13 +94,21 @@ const AddProduct = () => {
         <div className="addproduct">
             <div className="addproduct_inner">
                 <h1 className="title">Add Product</h1>
-                <Inputbox
+                <Select
+                    value={storename}
+                    onChange={handleChangestore}
+                    options={storeoption}
+                />
+                {storenameerr ? (
+                    <div className="text-danger">Required</div>
+                ) : null}
+                {/* <Inputbox
                     type="text"
                     placeholder="Store Name"
                     value={storename}
                     setvalue={setStoreName}
                     err={storenameerr}
-                />
+                /> */}
                 <Inputbox
                     type="text"
                     placeholder="Product Title"
@@ -113,7 +160,7 @@ const AddProduct = () => {
             <div className="addproduct_img">
                 <div className="container">
                     <div className="row">
-                        <div className="col-sm d-flex justify-content-center p-1">
+                        <div className="col-sm d-flex justify-content-center pb-1">
                             <input
                                 type="file"
                                 name="file"
@@ -122,7 +169,7 @@ const AddProduct = () => {
                             />
                             <label htmlFor="file">+</label>
                         </div>
-                        <div className="col-sm d-flex justify-content-center p-1">
+                        <div className="col-sm d-flex justify-content-center pb-1">
                             <input
                                 type="file"
                                 name="file"
@@ -131,7 +178,7 @@ const AddProduct = () => {
                             />
                             <label htmlFor="file">+</label>
                         </div>
-                        <div className="col-sm d-flex justify-content-center p-1">
+                        <div className="col-sm d-flex justify-content-center pb-1">
                             <input
                                 type="file"
                                 name="file"
