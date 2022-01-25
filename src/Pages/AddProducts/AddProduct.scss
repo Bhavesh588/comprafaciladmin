@@ -23,14 +23,31 @@
             color: #fff;
         }
 
+        .css-9gakcf-option {
+            background-color: white;
+            color: black;
+
+            &:hover {
+                background-color: #deebff;
+            }
+        }
+
+        .css-14el2xx-placeholder {
+            color: rgba($color: #fff, $alpha: 0.5);
+        }
+
         .css-1s2u09g-control {
             background-color: rgba($color: #000000, $alpha: 0.7);
             border-color: transparent;
             border-radius: 5px;
 
-            .css-14el2xx-placeholder {
-                color: rgba($color: #fff, $alpha: 0.5);
+            .css-qc6sy-singleValue {
+                color: #fff;
             }
+        }
+
+        .css-b62m3t-container {
+            margin-bottom: 5px;
         }
 
         input::-webkit-outer-spin-button,
