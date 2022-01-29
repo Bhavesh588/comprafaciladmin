@@ -1,8 +1,8 @@
 {
     "name": "comprafaciladmin",
+    "homepage": "https://bhavesh588.github.io/comprafaciladmin/",
     "version": "0.1.0",
     "private": true,
-    "homepage": "https://Bhavesh588.github.io/comprafaciladmin",
     "dependencies": {
         "@fortawesome/fontawesome-svg-core": "^1.2.36",
         "@fortawesome/free-solid-svg-icons": "^5.15.4",
