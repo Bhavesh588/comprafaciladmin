@@ -23,6 +23,7 @@ jobs:
             - checkout
             - run: echo "deploying code"
             - run: npm install
+            - run: npm run build
             - run: npm run deploy
 workflows:
     build_test_deploy:
