@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import Select from 'react-select'
-import { collection, onSnapshot } from 'firebase/firestore'
 import { db, storage } from '../../firebase/firebase'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { v4 as uuidv4 } from 'uuid'
 
 import './AddProduct.scss'
 import '../../Components/FontAwesomeIcons'
@@ -20,60 +19,73 @@ const AddProduct = () => {
 
     const [images, setImages] = useState([])
     const [imagestorage, setImageStorage] = useState([])
-    const [filename, setFilename] = useState([])
 
     const [storenameerr, setStoreNameErr] = useState(false)
     const [producttitleerr, setProductTitleErr] = useState(false)
     const [detailserr, setDetailsErr] = useState(false)
-    const [discountpriceerr, setDiscountPriceErr] = useState(false)
+    // const [discountpriceerr, setDiscountPriceErr] = useState(false)
     const [originalpriceerr, setOriginalPriceErr] = useState(false)
     const [minimumqtyerr, setMinimumQtyErr] = useState(false)
     const [categoryerr, setCategoryErr] = useState(false)
-    // const [imageserr, setImagesErr] = useState(false)
+    const [imageserr, setImagesErr] = useState(false)
 
     const [storeoption, setStoreOption] = useState(null)
-    // const [categoryoption, setCategoryOption] = useState(null)
+    const [categoryoption, setCategoryOption] = useState(null)
+
+    const [uploading, setUploading] = useState(false)
 
     useEffect(() => {
         if (storeoption === null) {
-            onSnapshot(collection(db, 'store'), (snapshot) => {
-                if (snapshot.docs.length !== 0) {
-                    var option = []
-                    snapshot.docs.map((doc) =>
-                        option.push({
-                            values: doc.data(),
-                            label:
-                                doc.data().Full_Name +
-                                ' => ' +
-                                doc.data().Store_id,
-                        })
-                    )
-                    setStoreOption(option)
-                }
-            })
+            db.collection('store')
+                .get()
+                .then(async (val) => {
+                    if (val.docs.length !== 0) {
+                        var option = []
+                        await val.docs.map((doc) =>
+                            option.push({
+                                value: doc.data(),
+                                label:
+                                    doc.data().Full_Name +
+                                    ' => ' +
+                                    doc.data().Store_id,
+                            })
+                        )
+                        setStoreOption(option)
+                    }
+                })
         }
-        // if(categoryoption === null) {
-        //     onSnapshot(collection(db, "category"), (snapshot) => {
-        //         if(snapshot.docs.length !== 0) {
-        //             var option = []
-        //             snapshot.docs.map(doc =>
-        //                 doc.data().Category?.map(main_cate =>
-        //                     main_cate.category?.map(sub_cate =>
-        //                         sub_cate.sub_category.map(cate =>
-        //                             option.push({values: doc.data(), label: main_cate.name + ' => ' + sub_cate.name + ' => ' + cate.name})
-        //                         )
-        //                     )
-        //                 )
-        //             )
-        //             setCategoryOption(option)
-        //         }
-        //     })
-        // }
-    }, [storeoption])
-
-    const handleChange = (selectedOption) => {
-        setCategory(selectedOption)
-    }
+        if (categoryoption === null) {
+            db.collection('category')
+                .get()
+                .then(async (val) => {
+                    if (val.docs.length !== 0) {
+                        var option = []
+                        await val.docs.map((doc) =>
+                            doc.data().Category?.map((main_cate) =>
+                                main_cate.category?.map((cate) =>
+                                    cate.sub_category.map((sub_cate) =>
+                                        option.push({
+                                            value: {
+                                                main_cate: main_cate.name,
+                                                cate: cate.name,
+                                                sub_cate: sub_cate.name,
+                                            },
+                                            label:
+                                                main_cate.name +
+                                                ' => ' +
+                                                cate.name +
+                                                ' => ' +
+                                                sub_cate.name,
+                                        })
+                                    )
+                                )
+                            )
+                        )
+                        setCategoryOption(option)
+                    }
+                })
+        }
+    }, [storeoption, categoryoption])
 
     const handleChangestore = (selectedOption) => {
         setStoreName(selectedOption)
@@ -102,45 +114,150 @@ const AddProduct = () => {
     }
 
     const onSubmit = async () => {
+        setUploading(true)
+
         if (storename === '') setStoreNameErr(true)
         else setStoreNameErr(false)
         if (details === '') setDetailsErr(true)
         else setDetailsErr(false)
         if (producttitle === '') setProductTitleErr(true)
         else setProductTitleErr(false)
-        if (discountprice === '') setDiscountPriceErr(true)
-        else setDiscountPriceErr(false)
+        // if (discountprice === '') setDiscountPriceErr(true)
+        // else setDiscountPriceErr(false)
         if (originalprice === '') setOriginalPriceErr(true)
         else setOriginalPriceErr(false)
         if (minimumqty === '') setMinimumQtyErr(true)
         else setMinimumQtyErr(false)
-        // if (category === null) setCategoryErr(true)
-        // else setCategoryErr(false)
+        if (category === null) setCategoryErr(true)
+        else setCategoryErr(false)
+        if (images.length === 0) setImagesErr(true)
+        else setImagesErr(false)
+
+        var discountper = 0
+        if (discountprice !== '') {
+            var cal =
+                100 - (parseInt(discountprice) * 100) / parseInt(originalprice)
+            discountper = cal
+        }
+
+        var final_category = await category.map((val) => val.value)
+        console.log(final_category)
 
         if (
-            !storenameerr &&
-            !detailserr &&
-            !producttitleerr &&
-            !discountpriceerr &&
-            !originalpriceerr &&
-            !minimumqtyerr &&
-            !categoryerr
+            storename !== '' &&
+            details !== '' &&
+            producttitle !== '' &&
+            originalprice !== '' &&
+            minimumqty !== '' &&
+            category !== null &&
+            images.length !== 0
         ) {
-            // for(var i=0; i<imagestorage.length; i++) {
-            //     var path = `/sample/${storename.values.Store_id}/${producttitle}/${imagestorage[i].name}`
-            //     const storageRef = await ref(storage, path)
-            //     uploadBytes(storageRef, imagestorage[i]).then(async (snapshot) => {
-            //         console.log('Uploaded');
-            //         await getDownloadURL(ref(storage, path))
-            //             .then((url) => {
-            //                 // `url` is the download URL for 'images/stars.jpg'
-            //                 setFilename((tid) => [...tid, url])
-            //             })
-            //             .catch((error) => {
-            //                 console.log('there is an error in url: ', error)
-            //             });
-            //     });
-            // }
+            await db
+                .collection('products')
+                .where('Store_id', '==', storename.value.Store_id)
+                .where('Product_Title', '==', producttitle)
+                .get()
+                .then(async (val) => {
+                    if (val.docs.length === 0) {
+                        var filename = []
+                        setUploading(true)
+                        for (var i = 0; i < imagestorage.length; i++) {
+                            var path = `/Products/${storename.value.Store_id}/${producttitle}/${imagestorage[i].name}`
+                            try {
+                                await storage.ref(path).put(imagestorage[i])
+                                const url = await storage
+                                    .ref(path)
+                                    .getDownloadURL()
+                                filename.push(url)
+                                setUploading(false)
+                                // console.log('Images is being uploaded successfully')
+                            } catch (err) {
+                                console.log(
+                                    'Error in file save in Add Product file'
+                                )
+                                console.log(err)
+                                setUploading(false)
+                            }
+                        }
+
+                        var uids = uuidv4()
+                        const arrName = []
+                        let curName = ''
+                        producttitle.split('').forEach((letter) => {
+                            curName += letter
+                            arrName.push(curName.toLowerCase())
+                        })
+                        // console.log(arrName)
+                        var d = new Date()
+                        var date = d.getDate()
+                        var month = d.getMonth() + 1
+                        var year = d.getFullYear()
+                        var lastdate = new Date(year, month, 0).getDate()
+                        var gap = storename.value?.Subscribe ? 3 : 1
+                        var dategap = date + gap
+                        while (dategap > lastdate) {
+                            if (dategap > lastdate) {
+                                month = month + 1
+                                if (month > 12) {
+                                    month = 1
+                                    year = year + 1
+                                }
+                                dategap = dategap - lastdate
+                            }
+                            lastdate = new Date(year, month, 0).getDate()
+                        }
+                        var start_Date = new Date().toISOString()
+                        var exp = new Date(
+                            year,
+                            month - 1,
+                            dategap + 1
+                        ).toISOString()
+
+                        var data = {
+                            Store: {
+                                Address: storename.value.Address,
+                                Full_Name: storename.value.Full_Name,
+                                Subscribe: storename.value.Subscribe,
+                            },
+                            Product_Title: producttitle,
+                            Min_Qty: parseInt(minimumqty),
+                            keywords: arrName,
+                            Category: final_category,
+                            Original_Price: originalprice,
+                            Discount_Price:
+                                discountprice === ''
+                                    ? parseInt(originalprice)
+                                    : parseInt(discountprice),
+                            Discount_Per:
+                                discountper === 0 ? 0 : Math.round(discountper),
+                            Details: details,
+                            Images: filename,
+                            Store_id: storename.value.Store_id,
+                            Product_id: uids,
+                            Viewed: 0,
+                            Contacted: 0,
+                            start_Date: start_Date,
+                            end_Date: exp,
+                        }
+
+                        // console.log(data)
+                        await db
+                            .collection('products')
+                            .doc(uids)
+                            .set(data)
+                            .then(() => {
+                                console.log('Document successfully written!')
+                                window.reload()
+                            })
+                            .catch((error) => {
+                                console.error(
+                                    'Error writing document (AddProduct): ',
+                                    error
+                                )
+                            })
+                        setUploading(false)
+                    }
+                })
         }
     }
 
@@ -152,9 +269,10 @@ const AddProduct = () => {
                     value={storename}
                     onChange={handleChangestore}
                     options={storeoption}
+                    placeholder="Select Store Name"
                 />
                 {storenameerr ? (
-                    <div className="text-danger">Required</div>
+                    <div className="text-light bg-danger">Required</div>
                 ) : null}
                 {/* <Inputbox
                     type="text"
@@ -178,38 +296,39 @@ const AddProduct = () => {
                     required
                 />
                 {detailserr ? (
-                    <div className="text-danger">Required</div>
+                    <div className="text-light bg-danger">Required</div>
                 ) : null}
                 <Inputbox
-                    type="number"
-                    placeholder="Discount Price"
+                    type="text"
+                    placeholder="Offer Price"
                     value={discountprice}
                     setvalue={setDiscountPrice}
-                    err={discountpriceerr}
+                    // err={discountpriceerr}
                 />
                 <Inputbox
-                    type="number"
+                    type="text"
                     placeholder="Original Price"
                     value={originalprice}
                     setvalue={setOriginalPrice}
                     err={originalpriceerr}
                 />
                 <Inputbox
-                    type="number"
+                    type="text"
                     placeholder="Minimum Qty"
                     value={minimumqty}
                     setvalue={setMinimumQty}
                     err={minimumqtyerr}
                 />
-                {/* <Select
+                <Select
                     value={category}
-                    onChange={handleChange}
+                    onChange={setCategory}
                     options={categoryoption}
+                    placeholder="Select Category"
                     isMulti
                 />
                 {categoryerr ? (
-                    <div className="text-danger">Required</div>
-                ) : null} */}
+                    <div className="text-light bg-danger">Required</div>
+                ) : null}
             </div>
             <div className="addproduct_img">
                 <div className="container">
@@ -304,8 +423,18 @@ const AddProduct = () => {
                     </div>
                 </div>
             </div>
-            <button className="btn_submit" onClick={onSubmit}>
-                Submit
+            {imageserr ? (
+                <div className="text-light bg-danger">
+                    Atleast One Images is Required
+                </div>
+            ) : null}
+            <button
+                className="btn_submit"
+                style={{ backgroundColor: uploading ? '#E94560aa' : '#E94560' }}
+                onClick={onSubmit}
+                disabled={uploading}
+            >
+                {uploading ? 'Uploading' : 'Submit'}
             </button>
         </div>
     )
