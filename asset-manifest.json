@@ -1,16 +1,15 @@
 {
   "files": {
-    "main.css": "/comprafaciladmin/static/css/main.39cac973.css",
-    "main.js": "/comprafaciladmin/static/js/main.52f3ce17.js",
+    "main.css": "/comprafaciladmin/static/css/main.e57c88ec.css",
+    "main.js": "/comprafaciladmin/static/js/main.e99cb6f8.js",
     "static/js/787.0fea7eb0.chunk.js": "/comprafaciladmin/static/js/787.0fea7eb0.chunk.js",
-    "static/media/Background.jpg": "/comprafaciladmin/static/media/Background.f2d4ac48ae8c6b1b1a5b.jpg",
     "index.html": "/comprafaciladmin/index.html",
-    "main.39cac973.css.map": "/comprafaciladmin/static/css/main.39cac973.css.map",
-    "main.52f3ce17.js.map": "/comprafaciladmin/static/js/main.52f3ce17.js.map",
+    "main.e57c88ec.css.map": "/comprafaciladmin/static/css/main.e57c88ec.css.map",
+    "main.e99cb6f8.js.map": "/comprafaciladmin/static/js/main.e99cb6f8.js.map",
     "787.0fea7eb0.chunk.js.map": "/comprafaciladmin/static/js/787.0fea7eb0.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.39cac973.css",
-    "static/js/main.52f3ce17.js"
+    "static/css/main.e57c88ec.css",
+    "static/js/main.e99cb6f8.js"
   ]
 }
