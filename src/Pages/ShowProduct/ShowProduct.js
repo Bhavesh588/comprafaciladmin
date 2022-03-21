@@ -34,11 +34,11 @@ function ShowProduct() {
     console.log(allstore);
     console.log(allproducts);
 
-    const sort_num = (ind) => {
-        var num = [];
-        allproducts.map((val) => num.push(val[ind]));
-        num.sort();
-    };
+    // const sort_num = (ind) => {
+    //     var num = [];
+    //     allproducts.map((val) => num.push(val[ind]));
+    //     num.sort();
+    // };
 
     const countproduct = (id) => {
         var count = 0;
