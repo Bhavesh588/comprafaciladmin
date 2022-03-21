@@ -1,13 +1,15 @@
-import AddProduct from './Pages/AddProducts/AddProduct'
+// import AddProduct from "./Pages/AddProducts/AddProduct";
+import ShowProduct from "./Pages/ShowProduct/ShowProduct";
 
-import './App.scss'
+import "./App.scss";
 
 function App() {
     return (
         <div className="App">
-            <AddProduct />
+            {/* <AddProduct /> */}
+            <ShowProduct />
         </div>
-    )
+    );
 }
 
-export default App
+export default App;
