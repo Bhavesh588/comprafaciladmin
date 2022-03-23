@@ -10,7 +10,7 @@ function App() {
         <div className="App">
             <Routes>
                 <Route
-                    path="/comprafaciladmin/products"
+                    path="/comprafaciladmin/"
                     exact
                     element={<ShowProduct />}
                 />
