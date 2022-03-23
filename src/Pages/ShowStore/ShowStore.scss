@@ -1,14 +1,9 @@
 @import "..//..//responsive//mixin";
 @import "..//..//responsive/variables";
 
-.showproduct {
+.showstore {
     width: 100%;
-    padding: 50px;
-
-    @media only screen and (max-width: 575px) {
-        padding-left: 10px;
-        padding-right: 10px;
-    }
+    padding: 100px;
 
     .btn_sort {
         border: 0;
@@ -31,16 +26,5 @@
         .btn_search {
             width: 100px;
         }
-    }
-}
-
-.modal-dialog {
-    // min-width: 500px;
-    max-width: fit-content;
-}
-
-.modal {
-    @media only screen and (max-width: 575px) {
-        padding-left: 0px;
     }
 }

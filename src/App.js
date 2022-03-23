@@ -1,13 +1,28 @@
-// import AddProduct from "./Pages/AddProducts/AddProduct";
+import AddProduct from "./Pages/AddProducts/AddProduct";
 import ShowProduct from "./Pages/ShowProduct/ShowProduct";
+import { Routes, Route } from "react-router-dom";
+import ShowStore from "./Pages/ShowStore/ShowStore";
 
 import "./App.scss";
 
 function App() {
     return (
         <div className="App">
-            {/* <AddProduct /> */}
-            <ShowProduct />
+            <Routes>
+                <Route
+                    path="/comprafaciladmin/products"
+                    exact
+                    element={<ShowProduct />}
+                />
+                <Route
+                    path="/comprafaciladmin/addproduct"
+                    element={<AddProduct />}
+                />
+                <Route
+                    path="/comprafaciladmin/stores"
+                    element={<ShowStore />}
+                />
+            </Routes>
         </div>
     );
 }
