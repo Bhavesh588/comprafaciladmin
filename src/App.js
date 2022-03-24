@@ -9,19 +9,9 @@ function App() {
     return (
         <div className="App">
             <Routes>
-                <Route
-                    path="/comprafaciladmin/"
-                    exact
-                    element={<ShowProduct />}
-                />
-                <Route
-                    path="/comprafaciladmin/addproduct"
-                    element={<AddProduct />}
-                />
-                <Route
-                    path="/comprafaciladmin/stores"
-                    element={<ShowStore />}
-                />
+                <Route path="/" exact element={<ShowProduct />} />
+                <Route path="/addproduct" element={<AddProduct />} />
+                <Route path="/stores" element={<ShowStore />} />
             </Routes>
         </div>
     );
