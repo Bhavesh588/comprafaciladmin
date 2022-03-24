@@ -298,7 +298,7 @@ const UpdateProduct = ({ editproduct }) => {
                         .update(data)
                         .then(() => {
                             console.log("Document successfully written!");
-                            window.reload();
+                            window.location.reload();
                         })
                         .catch((error) => {
                             console.error(
