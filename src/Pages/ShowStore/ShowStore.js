@@ -43,6 +43,15 @@ function ShowStore() {
         return count;
     };
 
+    const verifying = async (id) => {
+        console.log(id);
+        var ver = {
+            verify: "verify",
+        };
+        await db.collection("store").doc(id).update(ver);
+        window.location.reload();
+    };
+
     return (
         <div className="showstore">
             {/* <div className="input_outer">
@@ -59,6 +68,8 @@ function ShowStore() {
                         <th>#</th>
                         <th>Store Name</th>
                         <th className="text-center">Verified</th>
+                        <th>Email</th>
+                        <th>Telephone</th>
                         <th>Directions</th>
                         <th className="text-center">Total Products</th>
                     </tr>
@@ -69,8 +80,22 @@ function ShowStore() {
                             <th scope="row">{index + 1}</th>
                             <td>{val.Full_Name}</td>
                             <td className="text-center">
-                                {val.verify === "verify" ? "Yes" : "No"}
+                                {val.verify === "verify" ? (
+                                    <div className="bg-success text-light p-2 rounded">
+                                        Verified
+                                    </div>
+                                ) : (
+                                    <button
+                                        className="bg-danger text-light p-2 rounded border-0"
+                                        style={{ cursor: "pointer" }}
+                                        onClick={() => verifying(val.Store_id)}
+                                    >
+                                        Not Verified
+                                    </button>
+                                )}
                             </td>
+                            <td>{val.Email}</td>
+                            <td>{val.contactDetails.telephone}</td>
                             <td>
                                 <p>{val.Address.address1}</p>
                                 <p>{val.Address.address2}</p>
