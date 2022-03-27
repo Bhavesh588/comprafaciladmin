@@ -16,6 +16,9 @@
         text-align: left;
         background-color: transparent;
         font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .input_outer {

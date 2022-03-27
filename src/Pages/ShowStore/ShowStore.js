@@ -72,6 +72,7 @@ function ShowStore() {
                         <th>Telephone</th>
                         <th>Directions</th>
                         <th className="text-center">Total Products</th>
+                        <th>Subscription</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -104,6 +105,17 @@ function ShowStore() {
                             </td>
                             <td className="text-center">
                                 {countproduct(val.Store_id)}
+                            </td>
+                            <td className="text-center">
+                                {val.Subscribe ? (
+                                    <div className="bg-success text-light p-2 rounded">
+                                        Subscribe
+                                    </div>
+                                ) : (
+                                    <div className="bg-danger text-light p-2 rounded border-0">
+                                        Not Subscribe
+                                    </div>
+                                )}
                             </td>
                         </tr>
                     ))}

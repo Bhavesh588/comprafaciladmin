@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { db } from "../../firebase/firebase";
 import { Modal, Button } from "react-bootstrap";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import UpdateProduct from "../UpdateProduct/UpdateProduct";
 
@@ -10,6 +11,9 @@ function ShowProduct() {
     const [allproducts, setAllProduct] = useState(null);
     const [editproduct, setEditProduct] = useState(null);
     const [show, setShow] = useState(false);
+    const [viewedsort, setViewedSort] = useState(false);
+    const [contactedsort, setContactedSort] = useState(false);
+    const [pricesort, setPriceSort] = useState(false);
 
     useEffect(() => {
         const fetchdata = () => {
@@ -27,10 +31,52 @@ function ShowProduct() {
         fetchdata();
     }, [allproducts]);
 
-    const sort_num = (ind) => {
+    const sort_num = (ind, sort) => {
         var num = [];
         allproducts.map((val) => num.push(val[ind]));
-        num.sort();
+        if (sort) {
+            for (var i = 0; i < num.length; i++) {
+                for (var j = 0; j < num.length; j++) {
+                    if (num[i] < num[j]) {
+                        var extra = num[i];
+                        num[i] = num[j];
+                        num[j] = extra;
+
+                        extra = allproducts[i];
+                        allproducts[i] = allproducts[j];
+                        allproducts[j] = extra;
+                    }
+                }
+            }
+            if (ind === "Viewed") {
+                setViewedSort(!viewedsort);
+            } else if (ind === "Contacted") {
+                setContactedSort(!contactedsort);
+            } else if (ind === "Discount_Price") {
+                setPriceSort(!pricesort);
+            }
+        } else {
+            for (var k = 0; k < num.length; k++) {
+                for (var l = 0; l < num.length; l++) {
+                    if (num[k] > num[l]) {
+                        var ext = num[k];
+                        num[k] = num[l];
+                        num[l] = ext;
+
+                        ext = allproducts[k];
+                        allproducts[k] = allproducts[l];
+                        allproducts[l] = ext;
+                    }
+                }
+            }
+            if (ind === "Viewed") {
+                setViewedSort(!viewedsort);
+            } else if (ind === "Contacted") {
+                setContactedSort(!contactedsort);
+            } else if (ind === "Discount_Price") {
+                setPriceSort(!pricesort);
+            }
+        }
     };
 
     const handleClose = () => setShow(false);
@@ -58,16 +104,51 @@ function ShowProduct() {
                             <th scope="col">#</th>
                             <th scope="col">Store Name</th>
                             <th scope="col">Product_Title</th>
-                            <th scope="col">Price</th>
                             <th scope="col">
                                 <button
                                     className="btn_sort"
-                                    onClick={() => sort_num("Viewed")}
+                                    onClick={() =>
+                                        sort_num("Discount_Price", pricesort)
+                                    }
                                 >
-                                    Viewed
+                                    Price
+                                    {pricesort ? (
+                                        <FontAwesomeIcon icon="caret-down" />
+                                    ) : (
+                                        <FontAwesomeIcon icon="caret-up" />
+                                    )}
                                 </button>
                             </th>
-                            <th scope="col">Contacted</th>
+                            <th scope="col">
+                                <button
+                                    className="btn_sort"
+                                    onClick={() =>
+                                        sort_num("Viewed", viewedsort)
+                                    }
+                                >
+                                    Viewed
+                                    {viewedsort ? (
+                                        <FontAwesomeIcon icon="caret-down" />
+                                    ) : (
+                                        <FontAwesomeIcon icon="caret-up" />
+                                    )}
+                                </button>
+                            </th>
+                            <th scope="col">
+                                <button
+                                    className="btn_sort"
+                                    onClick={() =>
+                                        sort_num("Contacted", contactedsort)
+                                    }
+                                >
+                                    Contacted
+                                    {contactedsort ? (
+                                        <FontAwesomeIcon icon="caret-down" />
+                                    ) : (
+                                        <FontAwesomeIcon icon="caret-up" />
+                                    )}
+                                </button>
+                            </th>
                             <th>Edit</th>
                         </tr>
                     </thead>
@@ -97,7 +178,12 @@ function ShowProduct() {
                 <Modal.Header>
                     <Modal.Title>Update Product</Modal.Title>
                     <Button variant="secondary" onClick={handleClose}>
-                        X
+                        <FontAwesomeIcon
+                            icon="times"
+                            size="lg"
+                            color="#fff"
+                            className="close_btn"
+                        />
                     </Button>
                 </Modal.Header>
                 <Modal.Body>
