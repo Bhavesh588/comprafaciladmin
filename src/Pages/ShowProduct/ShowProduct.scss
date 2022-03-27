@@ -1,0 +1,49 @@
+@import "..//..//responsive//mixin";
+@import "..//..//responsive/variables";
+
+.showproduct {
+    width: 100%;
+    padding: 50px;
+
+    @media only screen and (max-width: 575px) {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .btn_sort {
+        border: 0;
+        width: 100%;
+        text-align: left;
+        background-color: transparent;
+        font-weight: 700;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .input_outer {
+        width: 100%;
+        display: flex;
+        margin: 20px 0px;
+
+        .input_width {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .btn_search {
+            width: 100px;
+        }
+    }
+}
+
+.modal-dialog {
+    // min-width: 500px;
+    max-width: fit-content;
+}
+
+.modal {
+    @media only screen and (max-width: 575px) {
+        padding-left: 0px;
+    }
+}

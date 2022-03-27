@@ -1,0 +1,30 @@
+@import "..//..//responsive//mixin";
+@import "..//..//responsive/variables";
+
+.showstore {
+    width: 100%;
+    padding: 100px;
+
+    .btn_sort {
+        border: 0;
+        width: 100%;
+        text-align: left;
+        background-color: transparent;
+        font-weight: 700;
+    }
+
+    .input_outer {
+        width: 100%;
+        display: flex;
+        margin: 20px 0px;
+
+        .input_width {
+            flex: 1;
+            padding: 10px;
+        }
+
+        .btn_search {
+            width: 100px;
+        }
+    }
+}

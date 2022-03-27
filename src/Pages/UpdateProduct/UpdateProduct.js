@@ -2,25 +2,34 @@ import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import { db, storage } from "../../firebase/firebase";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { v4 as uuidv4 } from "uuid";
+// import { v4 as uuidv4 } from "uuid";
 
-import "./AddProduct.scss";
+import "./UpdateProduct.scss";
 import "../../Components/FontAwesomeIcons";
 import Inputbox from "../../Components/Inputbox/Inputbox";
 
-const AddProduct = () => {
-    const [storename, setStoreName] = useState("");
-    const [producttitle, setProductTitle] = useState("");
-    const [details, setDetails] = useState("");
-    const [discountprice, setDiscountPrice] = useState("");
-    const [originalprice, setOriginalPrice] = useState("");
-    const [minimumqty, setMinimumQty] = useState("");
+const UpdateProduct = ({ editproduct }) => {
+    const [producttitle, setProductTitle] = useState(editproduct.Product_Title);
+    const [details, setDetails] = useState(editproduct.Details);
+    const [discountprice, setDiscountPrice] = useState(
+        editproduct.Discount_Per === 0
+            ? ""
+            : JSON.stringify(editproduct.Discount_Price)
+    );
+    const [originalprice, setOriginalPrice] = useState(
+        editproduct.Original_Price
+    );
+    const [minimumqty, setMinimumQty] = useState(editproduct.Min_Qty);
     const [category, setCategory] = useState(null);
 
-    const [images, setImages] = useState([]);
+    const [images, setImages] = useState(
+        editproduct.Images === undefined ? [] : editproduct.Images
+    );
+    const [imagesdb, setImagesDB] = useState(
+        editproduct.Images === undefined ? [] : editproduct.Images
+    );
     const [imagestorage, setImageStorage] = useState([]);
 
-    const [storenameerr, setStoreNameErr] = useState(false);
     const [producttitleerr, setProductTitleErr] = useState(false);
     const [detailserr, setDetailsErr] = useState(false);
     // const [discountpriceerr, setDiscountPriceErr] = useState(false)
@@ -29,32 +38,13 @@ const AddProduct = () => {
     const [categoryerr, setCategoryErr] = useState(false);
     const [imageserr, setImagesErr] = useState(false);
 
-    const [storeoption, setStoreOption] = useState(null);
     const [categoryoption, setCategoryOption] = useState(null);
 
     const [uploading, setUploading] = useState(false);
 
     useEffect(() => {
-        if (storeoption === null) {
-            db.collection("store")
-                .get()
-                .then(async (val) => {
-                    if (val.docs.length !== 0) {
-                        var option = [];
-                        await val.docs.map((doc) =>
-                            option.push({
-                                value: doc.data(),
-                                label:
-                                    doc.data().Full_Name +
-                                    " => " +
-                                    doc.data().Store_id,
-                            })
-                        );
-                        setStoreOption(option);
-                    }
-                });
-        }
         if (categoryoption === null) {
+            console.log("its called in Update Product");
             db.collection("category")
                 .get()
                 .then(async (val) => {
@@ -85,11 +75,28 @@ const AddProduct = () => {
                     }
                 });
         }
-    }, [storeoption, categoryoption]);
-
-    const handleChangestore = (selectedOption) => {
-        setStoreName(selectedOption);
-    };
+        if (category === null) {
+            if (editproduct.Category.length !== 0) {
+                var option = [];
+                editproduct.Category?.map((doc) =>
+                    option.push({
+                        value: {
+                            main_cate: doc.main_cate,
+                            cate: doc.cate,
+                            sub_cate: doc.sub_cate,
+                        },
+                        label:
+                            doc.main_cate +
+                            " => " +
+                            doc.cate +
+                            " => " +
+                            doc.sub_cate,
+                    })
+                );
+                setCategory(option);
+            }
+        }
+    }, [category, editproduct.Category, categoryoption]);
 
     const select_img = (input) => {
         if (!input) return;
@@ -111,13 +118,15 @@ const AddProduct = () => {
         });
         setImageStorage(filtered_storage);
         // console.log(filtered_values, filtered_storage)
+        var filtered_imagesdb = imagesdb.filter(function (itm) {
+            return imagesdb.indexOf(itm) !== i;
+        });
+        setImagesDB(filtered_imagesdb);
     };
 
     const onSubmit = async () => {
         setUploading(true);
 
-        if (storename === "") setStoreNameErr(true);
-        else setStoreNameErr(false);
         if (details === "") setDetailsErr(true);
         else setDetailsErr(false);
         if (producttitle === "") setProductTitleErr(true);
@@ -141,10 +150,15 @@ const AddProduct = () => {
         }
 
         var final_category = await category.map((val) => val.value);
-        console.log(final_category);
+        // console.log(final_category);
+        // console.log(details !== "");
+        // console.log(producttitle !== "");
+        // console.log(originalprice !== "");
+        // console.log(minimumqty !== "");
+        // console.log(category !== null);
+        // console.log(images !== 0);
 
         if (
-            storename !== "" &&
             details !== "" &&
             producttitle !== "" &&
             originalprice !== "" &&
@@ -154,15 +168,51 @@ const AddProduct = () => {
         ) {
             await db
                 .collection("products")
-                .where("Store_id", "==", storename.value.Store_id)
+                .where("Store_id", "==", editproduct.Store_id)
                 .where("Product_Title", "==", producttitle)
                 .get()
                 .then(async (val) => {
-                    if (val.docs.length === 0) {
-                        var filename = [];
-                        setUploading(true);
+                    console.log(val.docs.length);
+                    // if (val.docs.length === 0) {
+                    var filename = [...imagesdb];
+                    // if (producttitle !== editproduct.Product_Title) {
+                    //     for (var i = 0; i < imagesdb.length; i++) {
+                    //         var name = imagesdb[i]
+                    //                 .split("%20")[3]
+                    //                 .split("%2F")[1]
+                    //                 .split("?")[0]
+                    //         var path = `/Products/${editproduct.Store_id}/${producttitle}/${name}`;
+                    //         try {
+                    //             await storage.ref(path).put(imagesdb[i]);
+                    //             const url = await storage
+                    //                 .ref(path)
+                    //                 .getDownloadURL();
+                    //             filename.push(url);
+                    //             console.log(filename);
+                    //             if (
+                    //                 producttitle !== editproduct.Product_Title
+                    //             ) {
+                    //                 storage
+                    //                     .ref(
+                    //                         `/Products/${editproduct.Store_id}/${editproduct.Product_Title}/${imagesdb[i].name}`
+                    //                     )
+                    //                     .delete();
+                    //             }
+                    //             setUploading(false);
+                    //             // console.log('Images is being uploaded successfully')
+                    //         } catch (err) {
+                    //             console.log(
+                    //                 "Error in file save in Add Product file"
+                    //             );
+                    //             console.log(err);
+                    //             setUploading(false);
+                    //         }
+                    //     }
+                    // }
+                    setUploading(true);
+                    if (imagestorage.length !== 0) {
                         for (var i = 0; i < imagestorage.length; i++) {
-                            var path = `/Products/${storename.value.Store_id}/${producttitle}/${imagestorage[i].name}`;
+                            var path = `/Products/${editproduct.Store_id}/${producttitle}/${imagestorage[i].name}`;
                             try {
                                 await storage.ref(path).put(imagestorage[i]);
                                 const url = await storage
@@ -179,93 +229,93 @@ const AddProduct = () => {
                                 setUploading(false);
                             }
                         }
-
-                        var uids = uuidv4();
-                        const arrName = [];
-                        let curName = "";
-                        producttitle.split("").forEach((letter) => {
-                            curName += letter;
-                            arrName.push(curName.toLowerCase());
-                        });
-                        // console.log(arrName)
-                        var d = new Date();
-                        var date = d.getDate();
-                        var month = d.getMonth() + 1;
-                        var year = d.getFullYear();
-                        var lastdate = new Date(year, month, 0).getDate();
-                        var gap = storename.value?.Subscribe ? 3 : 1;
-                        var dategap = date + gap;
-                        while (dategap > lastdate) {
-                            if (dategap > lastdate) {
-                                month = month + 1;
-                                if (month > 12) {
-                                    month = 1;
-                                    year = year + 1;
-                                }
-                                dategap = dategap - lastdate;
-                            }
-                            lastdate = new Date(year, month, 0).getDate();
-                        }
-                        var start_Date = new Date().toISOString();
-                        var exp = new Date(
-                            year,
-                            month - 1,
-                            dategap + 1
-                        ).toISOString();
-
-                        var data = {
-                            Store: {
-                                Address: storename.value.Address,
-                                Full_Name: storename.value.Full_Name,
-                                Subscribe: storename.value.Subscribe,
-                            },
-                            Product_Title: producttitle,
-                            Min_Qty: parseInt(minimumqty),
-                            keywords: arrName,
-                            Category: final_category,
-                            Original_Price: originalprice,
-                            Discount_Price:
-                                discountprice === ""
-                                    ? parseInt(originalprice)
-                                    : parseInt(discountprice),
-                            Discount_Per:
-                                discountper === 0 ? 0 : Math.round(discountper),
-                            Details: details,
-                            Images: filename,
-                            Store_id: storename.value.Store_id,
-                            Product_id: uids,
-                            Viewed: 0,
-                            Contacted: 0,
-                            start_Date: start_Date,
-                            end_Date: exp,
-                        };
-
-                        // console.log(data)
-                        await db
-                            .collection("products")
-                            .doc(uids)
-                            .set(data)
-                            .then(() => {
-                                console.log("Document successfully written!");
-                                window.location.reload();
-                            })
-                            .catch((error) => {
-                                console.error(
-                                    "Error writing document (AddProduct): ",
-                                    error
-                                );
-                            });
-                        setUploading(false);
                     }
+
+                    // var uids = uuidv4();
+                    const arrName = [];
+                    let curName = "";
+                    producttitle.split("").forEach((letter) => {
+                        curName += letter;
+                        arrName.push(curName.toLowerCase());
+                    });
+                    // console.log(arrName)
+                    // var d = new Date();
+                    // var date = d.getDate();
+                    // var month = d.getMonth() + 1;
+                    // var year = d.getFullYear();
+                    // var lastdate = new Date(year, month, 0).getDate();
+                    // var gap = editproduct?.Subscribe ? 3 : 1;
+                    // var dategap = date + gap;
+                    // while (dategap > lastdate) {
+                    //     if (dategap > lastdate) {
+                    //         month = month + 1;
+                    //         if (month > 12) {
+                    //             month = 1;
+                    //             year = year + 1;
+                    //         }
+                    //         dategap = dategap - lastdate;
+                    //     }
+                    //     lastdate = new Date(year, month, 0).getDate();
+                    // }
+                    // var start_Date = new Date().toISOString();
+                    // var exp = new Date(
+                    //     year,
+                    //     month - 1,
+                    //     dategap + 1
+                    // ).toISOString();
+
+                    var data = {
+                        // Store: {
+                        //     Address: editproduct.Store.Address,
+                        //     Full_Name: editproduct.Store.Full_Name,
+                        //     Subscribe: editproduct.Store.Subscribe,
+                        // },
+                        Product_Title: producttitle,
+                        Min_Qty: parseInt(minimumqty),
+                        keywords: arrName,
+                        Category: final_category,
+                        Original_Price: originalprice,
+                        Discount_Price:
+                            discountprice === ""
+                                ? parseInt(originalprice)
+                                : parseInt(discountprice),
+                        Discount_Per:
+                            discountper === 0 ? 0 : Math.round(discountper),
+                        Details: details,
+                        Images: filename,
+                        // Store_id: editproduct.Store_id,
+                        // Product_id: uids,
+                        // Viewed: 0,
+                        // Contacted: 0,
+                        // start_Date: start_Date,
+                        // end_Date: exp,
+                    };
+
+                    // console.log(data);
+                    await db
+                        .collection("products")
+                        .doc(editproduct.Product_id)
+                        .update(data)
+                        .then(() => {
+                            console.log("Document successfully written!");
+                            window.location.reload();
+                        })
+                        .catch((error) => {
+                            console.error(
+                                "Error writing document (UpdateProduct): ",
+                                error
+                            );
+                        });
+                    setUploading(false);
+                    // }
                 });
         }
     };
 
     return (
-        <div className="addproduct">
-            <div className="addproduct_inner">
-                <h1 className="title">Add Product</h1>
-                <Select
+        <div className="updateproduct">
+            <div className="updateproduct_inner">
+                {/* <Select
                     value={storename}
                     onChange={handleChangestore}
                     options={storeoption}
@@ -273,7 +323,7 @@ const AddProduct = () => {
                 />
                 {storenameerr ? (
                     <div className="text-light bg-danger">Required</div>
-                ) : null}
+                ) : null} */}
                 {/* <Inputbox
                     type="text"
                     placeholder="Store Name"
@@ -440,4 +490,4 @@ const AddProduct = () => {
     );
 };
 
-export default AddProduct;
+export default UpdateProduct;
